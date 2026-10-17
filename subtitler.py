@@ -105,14 +105,28 @@ def burn_subtitles(video_path, srt_path, output_path, mode="pad"):
         video_path,
         "-vf",
         vf_filter,
+        "-map",
+        "0:v:0",
+        "-map",
+        "0:a?",
         "-c:v",
         "libx264",
         "-preset",
         "fast",
         "-crf",
         "18",
+        "-pix_fmt",
+        "yuv420p",
         "-c:a",
-        "copy",
+        "aac",
+        "-ar",
+        "48000",
+        "-ac",
+        "2",
+        "-vsync",
+        "cfr",
+        "-movflags",
+        "+faststart",
         output_path,
     ]
 
@@ -125,33 +139,55 @@ def burn_subtitles(video_path, srt_path, output_path, mode="pad"):
 
 
 def merge_videos(video_list, output_path):
-    """Stitches multiple MP4 clips into a single video before subtitling."""
-    ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
-    list_file = "temp_concat_list.txt"
+    """Stitches multiple MP4 clips into a single video before subtitling.
 
-    with open(list_file, "w", encoding="utf-8") as f:
-        for v in video_list:
-            abs_path = os.path.abspath(v).replace("\\", "/")
-            f.write(f"file '{abs_path}'\n")
+    The concat demuxer is fragile when source MP4s do not share perfectly
+    aligned timestamps. Use a filter-based concat instead, which resets PTS for
+    each input before concatenation so we do not get the duplicated-frame freeze
+    seen after roughly 20 seconds in the previous version.
+    """
+    ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+    if not video_list:
+        raise ValueError("video_list cannot be empty")
+
+    input_args = []
+    for v in video_list:
+        input_args.extend(["-i", v])
+
+    stream_pairs = []
+    for idx in range(len(video_list)):
+        stream_pairs.append(f"[{idx}:v]setpts=PTS-STARTPTS[v{idx}];[{idx}:a]asetpts=PTS-STARTPTS[a{idx}];")
+
+    concat_filter = "".join(stream_pairs) + "".join(
+        f"[v{idx}][a{idx}]" for idx in range(len(video_list))
+    ) + f"concat=n={len(video_list)}:v=1:a=1[vout][aout]"
 
     cmd = [
         ffmpeg_exe,
         "-y",
-        "-f",
-        "concat",
-        "-safe",
-        "0",
-        "-i",
-        list_file,
-        "-c",
-        "copy",
+        *input_args,
+        "-filter_complex",
+        concat_filter,
+        "-map",
+        "[vout]",
+        "-map",
+        "[aout]",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "fast",
+        "-crf",
+        "18",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-movflags",
+        "+faststart",
         output_path,
     ]
     print("Merging clips...")
     subprocess.run(cmd, check=True)
-
-    if os.path.exists(list_file):
-        os.remove(list_file)
 
 
 if __name__ == "__main__":

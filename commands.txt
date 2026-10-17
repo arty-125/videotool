@@ -5,4 +5,4 @@ python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portra
 python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4
 
 3. Full-Screen Zoom (--mode crop)
-python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4 --mode crop
+python subtitler.py -m German01.mp4 German02.mp4 German03.mp4 German04.mp4 German05.mp4 -s master.srt -o instagram_portrait.mp4 --mode crop
