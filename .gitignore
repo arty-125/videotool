@@ -1,0 +1,31 @@
+# Generated media / subtitle files
+*.mp4
+*.mov
+*.m4v
+*.mkv
+*.avi
+*.wmv
+*.webm
+*.flv
+*.gif
+*.srt
+*.vtt
+*.sub
+*.ass
+*.ssa
+*.mp3
+*.wav
+*.aac
+*.ogg
+
+# Common video tool outputs
+output/
+exports/
+render/
+results/
+
+# Language folders to avoid from code-only repo
+[Gg]erman/
+[Ff]rench/
+**/[Gg]erman/
+**/[Ff]rench/

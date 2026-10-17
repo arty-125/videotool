@@ -1,0 +1,8 @@
+1. Cream Background Match (Default — Recommended)
+python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4
+
+2. Blurred Video Background (--mode blur)
+python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4
+
+3. Full-Screen Zoom (--mode crop)
+python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4 --mode crop
