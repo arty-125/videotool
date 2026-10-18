@@ -7,3 +7,11 @@ python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portra
 3. Full-Screen Zoom (--mode crop)
 python subtitler.py -m German01.mp4 German02.mp4 German03.mp4 German04.mp4 German05.mp4 -s master.srt -o Lesson1-German.mp4 --mode crop
 python subtitler.py -m French01.mp4 French02.mp4 French03.mp4 French04.mp4 French05.mp4 -s master.srt -o Lesson1-French.mp4 --mode crop
+
+
+4. Merging
+python merger.py -m de_00.mp4 de_01.jpg de_02.jpg de_03.jpg de_04.jpg de_05.jpg de_06.jpg de_07.jpg de_08.jpg -o merged.mp4
+python merger.py -m de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png -o merged.mp4
+
+5. Youtube
+python merger.py -m starter.png de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png finisher.png -o merged.mp4 --overwrite
