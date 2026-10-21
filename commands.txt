@@ -5,13 +5,35 @@ python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portra
 python subtitler.py -m 1.mp4 2.mp4 3.mp4 4.mp4 -s master.srt -o instagram_portrait.mp4
 
 3. Full-Screen Zoom (--mode crop)
-python subtitler.py -m German01.mp4 German02.mp4 German03.mp4 German04.mp4 German05.mp4 -s master.srt -o Lesson1-German.mp4 --mode crop
-python subtitler.py -m French01.mp4 French02.mp4 French03.mp4 French04.mp4 French05.mp4 -s master.srt -o Lesson1-French.mp4 --mode crop
+python subtitler.py -m g01.mp4 g02.mp4 g03.mp4 g04.mp4 g05.mp4 -s master.srt -o de_00.mp4 --mode crop
+python subtitler.py -m f01.mp4 f02.mp4 f03.mp4 f04.mp4 f05.mp4 -s master.srt -o fr_00.mp4 --mode crop
 
 
 4. Merging
-python merger.py -m de_00.mp4 de_01.jpg de_02.jpg de_03.jpg de_04.jpg de_05.jpg de_06.jpg de_07.jpg de_08.jpg -o merged.mp4
-python merger.py -m de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png -o merged.mp4
+python merger.py -m de_00.mp4 de_01.jpg de_02.jpg de_03.jpg de_04.jpg de_05.jpg de_06.jpg de_07.jpg de_08.jpg -o mergedG.mp4
+python merger.py -m de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png -o mergedF.mp4
 
 5. Youtube
-python merger.py -m starter.png de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png finisher.png -o merged.mp4 --overwrite
+python merger.py -m starter.png de_00.mp4 de_01.png de_02.png de_03.png de_04.png de_05.png de_06.png de_07.png de_08.png finisher.png -o mergedG.mp4 --overwrite
+python merger.py -m starter.png fr_00.mp4 fr_01.png fr_02.png fr_03.png fr_04.png fr_05.png fr_06.png fr_07.png fr_08.png finisher.png -o mergedF.mp4 --overwrite
+
+6. Local Storybook Animation (no AI model or online services)
+python AnimationCreator.py --demo -o tourist_animation.mp4 --duration 20 --overwrite
+python AnimationCreator.py --story "A tourist arrives in Berlin and finds a restaurant." -o story_animation.mp4 --narrate
+
+Use a UTF-8 story text file, with a blank line between scenes:
+python AnimationCreator.py --story-file story.txt -o story_animation.mp4 --narrate
+
+Optional custom artwork: add --images scene1.png scene2.png (one image per scene, or one image for all scenes).
+Without images, illustrations use simple keyword-based templates, not AI-generated actions.
+Narration is optional and uses installed Windows voices. Omit --duration to allow automatic narration length.
+
+7. Orchestrate French and German videos
+python ORchestration.py
+
+Run from the folder containing sf*.mp4, sg*.mp4, masterf.srt, masterg.srt,
+fr*.png, de*.png, Starter.png, and Finisher.png. Matching is case insensitive;
+clips and slides are naturally sorted (sf2 before sf10). Only this folder is scanned.
+Creates Output if needed and writes fr_00.mp4 and de_00.mp4 using crop mode,
+then mergerF.mp4 and MergeG.mp4 with Starter.png first and Finisher.png last.
+All outputs are replaced on reruns; the merger commands use --overwrite.

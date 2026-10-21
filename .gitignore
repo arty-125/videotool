@@ -17,6 +17,7 @@
 *.wav
 *.aac
 *.ogg
+*.png
 
 # Common video tool outputs
 output/
