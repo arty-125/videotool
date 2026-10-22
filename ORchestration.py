@@ -1,8 +1,10 @@
-"""Run both language pipelines using files in the current working directory.
+"""Run available language pipelines using media in the Output subdirectory.
 
 Usage: python ORchestration.py
-Requires sf*.mp4, sg*.mp4, masterf.srt, masterg.srt, fr*.png, de*.png,
-Starter.png, and Finisher.png (case insensitive). Names are naturally sorted.
+French requires sf*.mp4, masterf.srt, and fr*.png; German requires sg*.mp4,
+masterg.srt, and de*.png. Either or both languages can be present.
+All inputs, including Starter.png and Finisher.png, must be inside Output.
+Matching is case insensitive. Names are naturally sorted.
 All generated videos are saved in Output and replaced on subsequent runs.
 """
 
@@ -36,10 +38,9 @@ def orchestrate(source: Path) -> None:
         if not script.is_file():
             raise FileNotFoundError(f"Required script does not exist: {script}")
 
-    files = [path for path in source.iterdir() if path.is_file()]
-    starter = required_file(files, "Starter.png")
-    finisher = required_file(files, "Finisher.png")
     output = source / "Output"
+    output.mkdir(exist_ok=True)
+    files = [path for path in output.iterdir() if path.is_file()]
     jobs = []
     for prefix, language, subtitle_name, final_name in (
         ("sf", "fr", "masterf.srt", "mergerF.mp4"),
@@ -61,15 +62,25 @@ def orchestrate(source: Path) -> None:
             ),
             key=natural_key,
         )
+        has_subtitle = any(
+            path.name.casefold() == subtitle_name for path in files
+        )
+        if not clips and not images and not has_subtitle:
+            print(f"Skipping {language}: no source inputs found.", flush=True)
+            continue
         if not clips:
-            raise ValueError(f"No {prefix}*.mp4 clips found in {source}")
+            raise ValueError(f"No {prefix}*.mp4 clips found in {output}")
         if not images:
-            raise ValueError(f"No {language}*.png slides found in {source}")
+            raise ValueError(f"No {language}*.png slides found in {output}")
         subtitle = required_file(files, subtitle_name)
         jobs.append((clips, subtitle, images, output / f"{language}_00.mp4",
                      output / final_name))
 
-    output.mkdir(exist_ok=True)
+    if not jobs:
+        raise ValueError(f"No French (sf*) or German (sg*) source inputs found in {output}")
+    starter = required_file(files, "Starter.png")
+    finisher = required_file(files, "Finisher.png")
+
     # subtitler.py uses fixed temporary filenames; isolate them for this run.
     with tempfile.TemporaryDirectory(prefix="orchestration-", dir=output) as workdir:
         for clips, subtitle, images, video, final in jobs:

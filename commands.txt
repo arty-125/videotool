@@ -31,9 +31,16 @@ Narration is optional and uses installed Windows voices. Omit --duration to allo
 7. Orchestrate French and German videos
 python ORchestration.py
 
-Run from the folder containing sf*.mp4, sg*.mp4, masterf.srt, masterg.srt,
-fr*.png, de*.png, Starter.png, and Finisher.png. Matching is case insensitive;
-clips and slides are naturally sorted (sf2 before sf10). Only this folder is scanned.
+Run from the project folder. Place all inputs (sf*.mp4, sg*.mp4, masterf.srt,
+masterg.srt, fr*.png, de*.png, Starter.png, and Finisher.png)
+inside its Output subfolder. Matching is case insensitive; clips and slides
+are naturally sorted (sf2 before sf10). Media is scanned only inside Output,
+not recursively and not in the project folder.
 Creates Output if needed and writes fr_00.mp4 and de_00.mp4 using crop mode,
 then mergerF.mp4 and MergeG.mp4 with Starter.png first and Finisher.png last.
 All outputs are replaced on reruns; the merger commands use --overwrite.
+French and German run independently: provide either language or both.
+French needs sf*.mp4, masterf.srt, and fr*.png; German needs sg*.mp4,
+masterg.srt, and de*.png. A language with no source inputs is skipped;
+an incomplete set reports an error before rendering. Starter.png and Finisher.png
+are required for any active language. Existing final outputs do not activate a language.
